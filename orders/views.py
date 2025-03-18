@@ -81,18 +81,21 @@ def stripe_webhook_view(request):
         event = stripe.Webhook.construct_event(
             payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
         )
-    except ValueError:
+    except ValueError as e:
         # Invalid payload
         return HttpResponse(status=400)
-    except stripe.error.SignatureVerificationError:
+    except stripe.error.SignatureVerificationError as e:
         # Invalid signature
         return HttpResponse(status=400)
 
-    if (
-            event['type'] == 'checkout.session.completed'
-            or event['type'] == 'checkout.session.async_payment_succeeded'
+    if (event['type'] == 'checkout.session.completed'
+        # or event['type'] == 'checkout.session.async_payment_succeeded'
+        # or event['type'] == 'charge.succeeded'
+        # or event['type'] == 'payment_intent.created'
+        # or event['type'] == 'payment_intent.succeeded'
+        # or event['type'] == 'charge.updated'
     ):
-        session = event['data']['object']['id']
+        session = event['data']['object']
 
         fulfill_order(session)
 

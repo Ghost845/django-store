@@ -26,7 +26,8 @@ class Order(models.Model):
     initiator = models.ForeignKey(to=User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'Order #{self.id}. {self.first_name} {self.last_name}'
+        return str(self.id)
+    #     return f'Order #{self.id}. {self.first_name} {self.last_name}'
 
     def update_after_payment(self):
         baskets = Basket.objects.filter(user=self.initiator)
